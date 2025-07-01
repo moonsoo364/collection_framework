@@ -239,3 +239,121 @@ public class ExamStack {
 }
 
 ```
+
+## HashSet
+
+HashSet은 자바에서 중복을 허용하지 않고 순서를 보장하지 않는 집합(Set) 자료구조 입니다. 내부적으로는 HashMap을 기반으로 동작하며 해시 함수를 이용하여 데이터를 저장합니다.
+
+## 주요 특징
+
+### 1. 중복 허용 안됨
+
+- 동일한 값은 한 번만 저장됨
+
+### 2. 순서 유지 X
+
+- 입력한 순서와 출력한 순서가 다를 수 있다.
+
+### 3. null 허용
+
+- 하나의 null 값 저장 가능
+
+### 4. 내부 구현
+
+- 내부적으로 HashMap 사용
+
+## 사용 예제
+
+```java
+package org.example.e02_set;
+
+import java.util.HashSet;
+
+public class ExamHashSet {
+    public static void main(String[] args) {
+        HashSet<String> fruits = new HashSet<>();
+
+        fruits.add("Apple");
+        fruits.add("Banana");
+        fruits.add("Orange");
+        fruits.add("Apple");//중복 추가
+
+        System.out.println("과일 목록:" + fruits);
+        // 원소 확인
+        System.out.println("바나나가 포함되었나요? "+fruits.contains("Banana"));
+
+        fruits.remove("Orangs");
+        System.out.println("Orange 삭제 후: "+ fruits);
+        for(String fruit : fruits){
+            System.out.println("과일 : "+ fruit);
+        }
+    }
+}
+
+```
+
+## 실무에서 활용 예
+
+- 중복 제거가 필요한 경우 (중복 없는 유저 ID 목록, 태그 목록, IP 수집 등)
+- 빠른 포함 여부 체크가 필요한 경우 (`contains()` 는 평균 O(1) 시간)
+
+## equals()와 hashCode() 중요성
+
+HashSet은 객체의 `hashCode()` 와 `equals()` 메서드 기반으로 중복을 판단합니다. 사용자 객체를 HashSet에 담을 경우 이둘을 반드시 오버라이드해야 합니다.
+
+```java
+class User{
+    String name;
+
+    public User(String name){
+        this.name = name;
+    }
+
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(!(o instanceof User)) return false;
+        return this.name.equals(((User) o).name);
+    }
+    public int hashCode(){
+        return name.hashCode();
+    }
+}
+public class ExamUser {
+    public static void main(String[] args) {
+        HashSet<User> users = new HashSet<>();
+        users.add(new User("Alice"));
+        users.add(new User("Alice"));  // 중복 제거됨
+
+        System.out.println("사용자 수: " + users.size());  // 1
+
+    }
+}
+```
+
+### 1. `if (this == o) return true;`
+
+- **자기 자신과 비교하는 경우**:
+
+  → 두 참조가 같은 객체를 가리키는 경우이므로 `true` 반환.
+
+- 예: `user1.equals(user1)` → `true`
+
+---
+
+### 2. `if (!(o instanceof User)) return false;`
+
+- **타입 체크**:
+
+  → `o`가 `User` 클래스의 인스턴스가 아니면 동등하지 않다고 판단.
+
+- 예: `user1.equals("문자열")` → `false`
+
+---
+
+### 3. `return this.name.equals(((User) o).name);`
+
+- **형변환 후 내부 값 비교**:
+
+  → `o`를 `User`로 형변환하여 `name` 필드 값을 비교.
+
+  → `name`은 문자열(String)이므로 `.equals()`로 비교.
